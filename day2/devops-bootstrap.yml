@@ -1,0 +1,13 @@
+- name: Creating a ssh key for user on local host
+  hosts: localhost
+  roles:
+    - common
+
+- name: Creating a user on remote hosts
+  hosts:
+    - webservers
+    - appservers
+  roles:
+    - role: devops_user
+      become: yes
+      become_user: root 

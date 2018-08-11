@@ -1,0 +1,8 @@
+---
+# defaults file for devops_user
+user: devops
+user_id: 1005
+group: devops
+group_id: 1005
+private_key_path: /home/student/ansible/day2/
+users_admin_group: wheel

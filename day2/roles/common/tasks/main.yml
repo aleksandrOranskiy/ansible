@@ -1,0 +1,8 @@
+- name: Generating a ssh key
+  shell: ssh-keygen -b 2048 -t rsa -f "{{ private_key_path }}{{ user }}" -q -N ""
+  args:
+    creates: "{{ private_key_path }}{{ user }}"
+- name: Converting the rsa ssh key to pem ssh key
+  shell: |
+    openssl rsa -in "{{ user }}" -outform pem > "{{ user }}.pem"
+    sudo chmod 600 "{{ user }}.pem"

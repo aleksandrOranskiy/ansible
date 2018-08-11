@@ -1,0 +1,9 @@
+---
+# tasks file for java
+- name: Installing and configuring Java
+  package: "name={{ item }} state=present"
+  with_items: "{{ java_packages }}"
+- name: Get Java version
+  shell: java -version |& awk -F'"' '{print $2}'
+  register: java_version
+- debug: msg="{{ java_version.stdout_lines }}"

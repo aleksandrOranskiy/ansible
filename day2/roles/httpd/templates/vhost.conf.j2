@@ -1,0 +1,10 @@
+<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
+  ProxyPass         /  {{ proxy_url }}/ nocanon
+  ProxyPassReverse  /  "{{ proxy_url }}"/
+  ProxyRequests     Off
+  AllowEncodedSlashes NoDecode
+  <Proxy "{{ proxy_url }}"/*>
+    Order deny,allow
+    Allow from all
+  </Proxy>
+</VirtualHost>

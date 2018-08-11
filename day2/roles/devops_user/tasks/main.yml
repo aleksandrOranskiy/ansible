@@ -1,0 +1,29 @@
+---
+# tasks file for devops_user
+- name: Creating a group
+  group:
+    name: "{{ group }}"
+    gid: "{{ group_id }}"
+- name: Creating a user
+  user:
+    name: "{{ user }}"
+    uid: "{{ user_id }}"
+    group: "{{ group }}"
+- name: Sending a public key
+  authorized_key:
+    user: "{{ user }}"
+    state: present
+    key: '{{ lookup("file", "{{ private_key_path }}{{ user }}.pub") }}'
+- name: Configuring sudoers with disabling requiretty
+  template:
+    src: 'sudoers.j2'
+    dest: '/etc/sudoers.d/administrators'
+    owner: 'root'
+    group: 'root'
+    mode: '0440'
+- name: Adding a user admin privilleges
+  user:
+   name: '{{ user }}'
+   state: present
+   groups: '{{ users_admin_group }}'
+   append: yes

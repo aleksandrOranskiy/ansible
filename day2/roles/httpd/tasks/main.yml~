@@ -1,0 +1,25 @@
+---
+# tasks file for httpd
+- name: Installing httpd
+  yum:
+    name: httpd
+    state: latest
+- name: Creating virtual host config file
+  template:
+    src: vhost.conf.j2
+    dest: /etc/httpd/conf.d/custom.conf
+    owner: root
+    group: root
+    mode: 0644
+    notify: restart httpd
+- name: Configuring httpd as a service
+  systemd:
+    name: httpd
+    state: started
+    enabled: yes
+- name: Checking an installation and running
+  shell: |
+    httpd -version
+    systemctl is-active httpd
+  register: httpd_status
+- debug: msg="{{ httpd_status.stdout_lines}}"
