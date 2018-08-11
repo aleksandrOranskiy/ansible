@@ -1,0 +1,9 @@
+user: devops
+user_id: 1005
+group: devops
+group_id: 1005
+private_key_path: ~/ansible/day1/
+java_url: http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.rpm
+jenkins_repo: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+jenkins_repo_key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+proxy_url: http://192.168.50.111:8080

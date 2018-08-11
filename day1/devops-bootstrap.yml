@@ -1,0 +1,53 @@
+- name: Creating a ssh key for user on local host
+  hosts: localhost
+  vars_files:
+    - variables.yml
+  tasks:
+    - name: Generating a ssh key
+      shell: ssh-keygen -b 2048 -t rsa -f "{{ private_key_path }}{{ user }}" -q -N ""
+      args:
+        creates: "{{ private_key_path }}{{ user }}"
+    - name: Converting the rsa ssh key to pem ssh key
+      shell: |
+        openssl rsa -in "{{ user }}" -outform pem > "{{ user }}.pem"
+        sudo chmod 600 "{{ user }}.pem"
+
+- name: Creating a user on remote hosts
+  hosts:
+    - webservers
+    - appservers
+  vars_files:
+    - variables.yml
+  become: yes
+  become_user: root
+  tasks:
+    - name: Creating a group
+      group:
+        name: "{{ group }}"
+        gid: "{{ group_id }}"
+    - name: Creating a user
+      user:
+        name: "{{ user }}"
+        uid: "{{ user_id }}"
+        group: "{{ group }}"
+    - name: Sending a public key
+      authorized_key:
+        user: "{{ user }}"
+        state: present
+        key: '{{ lookup("file", "{{ private_key_path }}{{ user }}.pub") }}'
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: visudo -cf %s
+    - name: Add sudoers users to wheel group
+      user:
+        name: "{{ user }}"
+        groups: wheel
+        append: yes   

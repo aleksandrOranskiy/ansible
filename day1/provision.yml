@@ -1,0 +1,83 @@
+- name: Installing and configuring httpd
+  hosts: 
+    - webservers
+  vars_files:
+    - variables.yml
+  become: yes
+  become_user: root
+  tasks:
+    - name: Installing httpd
+      yum:
+        name: httpd
+        state: latest
+    - name: Creating an empty file
+      copy:
+        content: ""
+        dest: /etc/httpd/conf.d/proxy.conf
+        force: no
+        group: root
+        owner: root
+        mode: 0644
+    - name: Creating virtual host config file
+      blockinfile:
+        path: /etc/httpd/conf.d/proxy.conf
+        block: |
+          <VirtualHost *:80>
+            ProxyPass         /  "{{ proxy_url }}"/ nocanon
+            ProxyPassReverse  /  "{{ proxy_url }}"/
+            ProxyRequests     Off
+            AllowEncodedSlashes NoDecode
+            <Proxy "{{ proxy_url }}"/*>
+              Order deny,allow
+              Allow from all
+            </Proxy>
+          </VirtualHost>
+    - name: Configuring httpd as a service
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+- name: Installing and configuring jenkins
+  hosts:
+    - appservers
+  vars_files:
+    - variables.yml
+  become: yes
+  become_user: root
+  tasks:
+    - name: Installing and configuring Java
+      get_url:
+        url: "{{ java_url }}"
+        headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
+        dest: "/tmp/java.rpm"
+    - name: Downloading java rpm
+      yum:
+        name: /tmp/java.rpm
+        state: present
+    - name: Downloading jenkins.repo
+      get_url:
+        url: "{{ jenkins_repo }}"
+        dest: /etc/yum.repos.d/jenkins.repo
+    - name: Importing jenkins key
+      rpm_key:
+        state: present
+        key: "{{ jenkins_repo_key }}"
+    - name: Installing jenkins
+      yum:
+        name: jenkins
+        state: present
+    - name: Starting jenkins
+      systemd:
+        name: jenkins
+        state: started
+        enabled: yes
+    - name: Sleeping for 30 seconds and continue with play
+      wait_for: timeout=30
+      delegate_to: localhost
+    - name: Init password jenkin
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      changed_when: false
+      register: result
+    - name: Printing init password jenkins
+      debug:
+        var: result.stdout
