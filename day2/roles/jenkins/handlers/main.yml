@@ -4,3 +4,6 @@
   service: 
     name: jenkins
     state: restarted
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes

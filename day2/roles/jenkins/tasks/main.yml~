@@ -1,30 +1,33 @@
 ---
 # tasks file for jenkins
+- name: Ensuring a file exists
+  file:
+    path: "{{ jenkins_path }}"
+    state: directory    
 - name: Downloading a jenkins war file
   get_url: 
     url: "{{ jenkins_war_url }}{{ jenkins_version }}/jenkins.war"
     dest: "{{ jenkins_war_path }}"
-    checksum: "{{ jenkins_war_url }}{{ jenkins_version }}/jenkins.war.sha256"
 - name: Setting user-defined configuration options
   template: 
     src: jenkins.j2
     dest: /etc/sysconfig/jenkins
   notify: Restart Jenkins
 - name: Creating jenkins service
+  become: yes
   template:
     src: jenkins.service.j2
     dest: /etc/systemd/system/jenkins.service
     owner: root
     group: root
     mode: 0644
-    become: yes
   notify: reload-systemd
 - name: Enabling and starting jenkins service
+  become: yes
   systemd:
     name: jenkins.service
     enabled: yes
     state: started
-    become: yes
 - name: Checking an installation and running
   shell: |
     ls "{{ jenkins_war_path }}"

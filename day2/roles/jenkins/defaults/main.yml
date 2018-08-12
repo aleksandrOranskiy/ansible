@@ -8,6 +8,7 @@ jenkins_java_opts:
    - "-Djava.net.preferIPv4Stack=true"
 jenkins_java_location: "/usr/bin/java"
 jenkins_pidfile_path: "/var/run/$NAME/$NAME.pid"
+jenkins_path: "/usr/share/$NAME"
 jenkins_war_path: "/usr/share/$NAME/$NAME.war"
 jenkins_home_path: "/var/lib/$NAME"
 jenkins_run_standalone: "true"
@@ -20,6 +21,6 @@ jenkins_args:
   - "--httpPort=$HTTP_PORT"
 jenkins_http_port: "8080"
 user: "jenkins"
-user_id: 100
+user_id: 1005
 group: "jenkins"
 group_id: 1005
