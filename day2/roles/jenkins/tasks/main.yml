@@ -24,8 +24,8 @@
   notify: Reload systemd
 - name: Enabling and starting jenkins service
   become: yes
-  systemd:
-    name: jenkins.service
+  service:
+    name: jenkins
     enabled: yes
     state: started
 - name: Checking an installation and running
@@ -44,3 +44,17 @@
 - name: Printing init password jenkins
   debug:
     var: result.stdout
+- name: Ensure Ansible Facts Dir Exists
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+- name: Save Jenkins Fact
+  copy:
+    content:
+        {
+          "version": "{{ jenkins_version }}"
+        }
+    dest: /etc/ansible/facts.d/jenkins.fact
+- name: Reload Local Facts
+  setup:
+    filter: ansible_local

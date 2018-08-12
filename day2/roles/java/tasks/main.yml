@@ -6,4 +6,18 @@
 - name: Get Java version
   shell: java -version |& awk -F'"' '{print $2}'
   register: java_version
-- debug: msg="{{ java_version.stdout_lines }}"
+- debug: msg="{{ java_version.stdout}}"
+- name: Ensure Ansible Facts Dir Exists
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+- name: Save Java Fact
+  copy:
+    content:
+        {
+          "version": "{{ java_version.stdout }}"
+        }
+    dest: /etc/ansible/facts.d/java.fact
+- name: Reload Local Facts
+  setup:
+    filter: ansible_local

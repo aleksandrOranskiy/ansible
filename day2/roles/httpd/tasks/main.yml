@@ -23,3 +23,17 @@
     systemctl is-active httpd
   register: httpd_status
 - debug: msg="{{ httpd_status.stdout_lines}}"
+- name: Ensure Ansible Facts Dir Exists
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+- name: Save Httpd Fact  
+  copy:
+    content:
+        {
+          "version": "{{ httpd_status.stdout.split('\n')[0].split()[2] }}"
+        }
+    dest: /etc/ansible/facts.d/httpd.fact
+- name: Reload Local Facts
+  setup:
+    filter: ansible_local
