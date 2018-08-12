@@ -1,7 +1,9 @@
 - name: Creating a ssh key for user on local host
   hosts: localhost
   roles:
-    - common
+    - role: common
+      become: yes
+      become_user: root
 
 - name: Creating a user on remote hosts
   hosts:

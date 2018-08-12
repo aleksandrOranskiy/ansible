@@ -1,0 +1,5 @@
+- name: Creating a user
+  user:
+    name: "{{ user }}"
+    uid: "{{ user_id }}"
+    group: "{{ group }}"

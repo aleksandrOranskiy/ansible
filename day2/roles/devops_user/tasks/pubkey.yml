@@ -1,0 +1,6 @@
+- name: Sending a public key
+  authorized_key:
+    user: "{{ user }}"
+    state: present
+    key: '{{ lookup("file", "{{ private_key_path }}{{ user }}.pub") }}'
+

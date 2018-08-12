@@ -14,11 +14,16 @@
     user: "{{ user }}"
     state: present
     key: '{{ lookup("file", "{{ private_key_path }}{{ user }}.pub") }}'
-- name: Adding a user privilleges
+- name: Configuring sudoers with disabling requiretty
   template:
     src: 'sudoers.j2'
     dest: '/etc/sudoers.d/administrators'
     owner: 'root'
     group: 'root'
     mode: '0440'
-  when: users_manage_admin_sudoers == true
+- name: Adding a user admin privilleges
+  user:
+   name: '{{ user }}'
+   state: present
+   groups: '{{ users_admin_group }}'
+   append: yes

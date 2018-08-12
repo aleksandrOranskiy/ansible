@@ -4,6 +4,7 @@
   get_url: 
     url: "{{ jenkins_war_url }}{{ jenkins_version }}/jenkins.war"
     dest: "{{ jenkins_war_path }}"
+    checksum: "{{ jenkins_war_url }}{{ jenkins_version }}/jenkins.war.sha256"
 - name: Setting user-defined configuration options
   template: 
     src: jenkins.j2

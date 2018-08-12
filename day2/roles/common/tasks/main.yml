@@ -6,3 +6,8 @@
   shell: |
     openssl rsa -in "{{ user }}" -outform pem > "{{ user }}.pem"
     sudo chmod 600 "{{ user }}.pem"
+- name: Upgrading packages 
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ packages }}"

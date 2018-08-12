@@ -1,0 +1,6 @@
+- name: Adding a user admin privilleges
+  user:
+    name: '{{ user }}'
+    state: present
+    groups: '{{ users_admin_group }}'
+    append: yes
