@@ -1,14 +1,62 @@
 - name: Installing and configuring httpd
   hosts: 
     - webservers
+  vars:
+    
+  pre_tasks:
+    - name: Installing httpd
+      become: yes
+      yum:
+        name: httpd
+        state: latest
+    - name: Creating virtual host config file
+      template:
+        src: roles/httpd/templates/vhost.conf.j2
+        dest: /etc/httpd/conf.d/custom.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart httpd
+    - name: Configuring httpd as a service
+      become: yes
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: Checking an installation and running
+      shell: |
+        httpd -version
+        systemctl is-active httpd
+      register: httpd_status
+    - debug: msg="{{ httpd_status.stdout_lines}}"
+  tasks:
+    - name: Ensure Ansible Facts Dir Exists
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
   roles:
     - role: httpd
-      become: yes
-      become_user: root
+  post_tasks:
+    - name: Get version of Httpd
+      shell: |
+        /usr/sbin/httpd -version
+      register: httpd_version
+    - name: Save Httpd Fact  
+      copy:
+        content:
+          {
+            "version": "{{ httpd_version.stdout.split()[2] }}"
+          }
+        dest: /etc/ansible/facts.d/httpd.fact
+    - name: Reload Local Facts
+      setup:
+        filter: ansible_local
 
 - name: Installing and configuring jenkins
   hosts:
     - appservers
+  vars:
+    jenkins_version: "2.120"
   roles:
     - role: devops_user
       tasks_from:

@@ -1,18 +1,9 @@
 [webservers]
-webserver ansible_host=192.168.50.110
-
-[webservers:vars]
-ansible_user=devops
+webserver
 
 [appservers]
-appserver ansible_host=192.168.50.111
-
-[appservers:vars]
-ansible_user=devops
+appserver
 
 [servers:children]
 webservers
 appservers
-
-[servers:vars]
-ansible_ssh_private_key_file=/home/student/ansible/day2/devops.pem

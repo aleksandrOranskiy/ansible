@@ -1,39 +1,8 @@
 ---
 # tasks file for httpd
-- name: Installing httpd
-  yum:
-    name: httpd
-    state: latest
-- name: Creating virtual host config file
-  template:
-    src: vhost.conf.j2
-    dest: /etc/httpd/conf.d/custom.conf
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart httpd
-- name: Configuring httpd as a service
-  systemd:
-    name: httpd
-    state: started
-    enabled: yes
 - name: Checking an installation and running
   shell: |
     httpd -version
     systemctl is-active httpd
   register: httpd_status
 - debug: msg="{{ httpd_status.stdout_lines}}"
-- name: Ensure Ansible Facts Dir Exists
-  file:
-    path: /etc/ansible/facts.d
-    state: directory
-- name: Save Httpd Fact  
-  copy:
-    content:
-        {
-          "version": "{{ httpd_status.stdout.split('\n')[0].split()[2] }}"
-        }
-    dest: /etc/ansible/facts.d/httpd.fact
-- name: Reload Local Facts
-  setup:
-    filter: ansible_local
