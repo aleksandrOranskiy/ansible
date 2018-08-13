@@ -1,9 +1,6 @@
 [webservers]
-webserver
+webserver ansible_host=192.168.50.110 ansible_user=vagrant ansible_private_key_file=/home/student/ansible/day1/.vagrant/machines/webserver/virtualbox/private_key
 
 [appservers]
-appserver
+appserver ansible_host=192.168.50.111 ansible_user=vagrant ansible_private_key_file=/home/student/ansible/day1/.vagrant/machines/appserver/virtualbox/private_key
 
-[servers:children]
-webservers
-appservers

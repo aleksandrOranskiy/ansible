@@ -6,6 +6,7 @@ jenkins_name: "jenkins"
 jenkins_java_opts:
    - "-Djava.awt.headless=true"
    - "-Djava.net.preferIPv4Stack=true"
+   - "-Djenkins.install.runSetupWizard=false"
 jenkins_java_location: "/usr/bin/java"
 jenkins_pidfile_path: "/var/run/jenkins/jenkins.pid"
 jenkins_path: "/usr/share/jenkins"

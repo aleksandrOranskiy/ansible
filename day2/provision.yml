@@ -16,6 +16,7 @@
         owner: root
         group: root
         mode: 0644
+      become: yes
       notify: restart httpd
     - name: Configuring httpd as a service
       become: yes
